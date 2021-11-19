@@ -154,7 +154,7 @@ final class VTUData
             $responseBody['success'] = true;
             $responseBody['message'] = "";
             $routeParser = RouteContext::fromRequest($request)->getRouteParser();
-            $responseBody['redirect'] = $routeParser->urlFor("user-dashboard");
+            $responseBody['redirect'] = $routeParser->urlFor("dashboard");
         } else {
             $responseBody['success'] = false;
             $responseBody['message'] = !empty($message) ? $message : 'Unable to process request at the moment!';

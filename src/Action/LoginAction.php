@@ -76,7 +76,11 @@ class LoginAction
 
             $responseBody['message'] = "Logged in successfully.";
             $responseBody['success'] = true;
-            $responseBody['redirect'] = $routeParser->urlFor("{$user_type}-dashboard");
+            if ($user_type == "user") {
+                $responseBody['redirect'] = $routeParser->urlFor("dashboard");
+            } else {
+                $responseBody['redirect'] = $routeParser->urlFor("{$user_type}-dashboard");
+            }
         } else {
             $responseBody['message'] = !empty($message) ? $message : 'Invalid Login Details!';
             $responseBody['success'] = false;

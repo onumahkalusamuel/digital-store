@@ -9,15 +9,11 @@ return function (App $app) {
 
     $app->group('/user/', function (RouteCollectorProxy $group) {
 
-        //account logs= == trx
+        //account logs === trx
         $group->get('account-logs[/]', \App\Action\User\AccountLogsView::class)->setName('user-account-logs');
 
         //dashboard
-        $group->get('dashboard[/]', \App\Action\User\UserDashboardAction::class)->setName('user-dashboard');
-
-        // user profile
-        $group->get('profile[/]', \App\Action\User\ProfileView::class)->setName('user-profile');
-        $group->post('profile[/]', \App\Action\User\ProfileAction::class);
+        $group->get('dashboard[/]', \App\Action\User\UserDashboardAction::class)->setName('dashboard');
 
         $group->get('vtu-data/{network}[/]', [\App\Action\User\VTUData::class, 'init'])->setName('vtu-data');
         $group->post('vtu-data/{network}[/]', [\App\Action\User\VTUData::class, 'confirm']);
@@ -40,6 +36,11 @@ return function (App $app) {
 
         $group->get('payments[/]', [\App\Action\User\Payments::class, 'init'])->setName('payments');
         $group->post('payments[/]', [\App\Action\User\Payments::class, 'initiatePayment']);
+
+        $group->get('menu[/]', [\App\Action\User\Menu::class, 'init'])->setName('menu');
+        $group->get('history[/]', [\App\Action\User\History::class, 'init'])->setName('history');
+        $group->get('support[/]', [\App\Action\User\Support::class, 'init'])->setName('support');
+        $group->get('profile[/]', [\App\Action\User\Profile::class, 'init'])->setName('profile');
     })
         ->add(UserAuthMiddleware::class);
 };

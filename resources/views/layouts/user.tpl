@@ -28,20 +28,38 @@
 </head>
 
 <body>
-    <nav>
-        <li><a href="/">Dashboard</a></li>
-        <li><a href="#">Airtime</a></li>
-        <li><a href="#">Data</a></li>
-        <li><a href="#">WAEC/NECO/NABTEB</a></li>
-        <li><a href="#">Electricity</a></li>
-        <li><a href="{$route->urlFor('logout')}">Logout</a></li>
-    </nav>
-    <main>
-        <h2>{block name=title}{/block}</h2>
-        Balance: {$balances.balance} <br />
-        Loyalty Points: {$balances.loyalty_points}
-        {block name=body}{/block}
-    </main>
+    <div class="global-container container">
+        <main>
+            {* <p>{block name=title}{/block}</p>
+            Balance: {$balances.balance} <br />
+            Loyalty Points: {$balances.loyalty_points} *}
+            {block name=body}{/block}
+        </main>
+        <div class="fixed-footer-menu">
+            <div class="flex">
+                <a class="menu-item {if $active eq 'home'}menu-active{/if}" href="{$route->urlFor('dashboard')}">
+                    <img class="" alt="home" src="img/svg/house-door.svg" />
+                    <span class="menu-title">Home</span>
+                </a>
+                <a class="menu-item {if $active eq 'menu'}menu-active{/if}" href="{$route->urlFor('menu')}">
+                    <img class="" alt="menu" src="img/svg/list.svg" />
+                    <span class="menu-title">Menu</span>
+                </a>
+                <a class="menu-item {if $active eq 'history'}menu-active{/if}" href="{$route->urlFor('history')}">
+                    <img class="" alt="home" src="img/svg/clock-history.svg" />
+                    <span class="menu-title">History</span>
+                </a>
+                <a class="menu-item {if $active eq 'support'}menu-active{/if}" href="{$route->urlFor('support')}">
+                    <img class="" alt="support" src="img/svg/info-lg.svg" />
+                    <span class="menu-title">Support</span>
+                </a>
+                <a class="menu-item {if $active eq 'profile'}menu-active{/if}" href="{$route->urlFor('profile')}">
+                    <img class="" alt="profile" src="img/svg/person.svg" />
+                    <span class="menu-title">Profile</span>
+                </a>
+            </div>
+        </div>
+    </div>
     <script src="js/vendor/modernizr-3.11.2.min.js"></script>
     <script src="js/plugins.js"></script>
     <script src="js/main.js"></script>
