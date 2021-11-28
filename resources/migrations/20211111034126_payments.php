@@ -8,6 +8,10 @@ class Payments extends AbstractMigration
     protected function up(): void
     {
         $this->table('payments')
+            ->addColumn('user_id', 'integer', [
+                ColumnSettings::SETTING_DEFAULT => '0',
+                ColumnSettings::SETTING_NULL => true,
+            ])
             ->addColumn('type', 'string', [
                 ColumnSettings::SETTING_LENGTH => 20,
                 ColumnSettings::SETTING_DEFAULT => 'online',
@@ -29,6 +33,10 @@ class Payments extends AbstractMigration
             ])
             ->addColumn('details', 'text', [
                 ColumnSettings::SETTING_NULL => true,
+            ])
+            ->addColumn('status', 'enum', [
+                ColumnSettings::SETTING_VALUES => ['pending', 'completed', 'failed'],
+                ColumnSettings::SETTING_DEFAULT => 'pending'
             ])
             ->addColumn('created_at', 'timestamp', [
                 ColumnSettings::SETTING_DEFAULT => ColumnSettings::DEFAULT_VALUE_CURRENT_TIMESTAMP

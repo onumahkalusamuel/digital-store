@@ -133,6 +133,7 @@ final class SNSAirtime
                 'data' => [
                     'user_id' => $id,
                     'log_type' => 'sns-airtime',
+                    'service_provider' => $network,
                     'destination' => $data['phone'],
                     'amount' => $data['amount'],
                     'description' => "Airtime Share -{$network}",

@@ -61,10 +61,8 @@ final class SMEData
 
         $network = $args['network'];
 
-        $prefixes = $this->getPrefixes($network);
         $priceList = $this->$network->priceList($network);
 
-        $this->view->assign('prefixes', $prefixes);
         $this->view->assign('priceList', $priceList);
         $this->view->assign('network', $network);
 
@@ -151,6 +149,7 @@ final class SMEData
             // notify the user of this transaction
             $this->sendMail->sendTransactionLog([
                 'transaction' => "SME Data - {$network}",
+                'service_provider' => $network,
                 'trans_ref' => $smedata['trans_ref'],
                 'amount' => $currentBundle['amount'],
                 'destination' => $data['phone'],
@@ -175,6 +174,21 @@ final class SMEData
         $response->getBody()->write(json_encode($responseBody));
 
         // return response
+        return $response;
+    }
+
+    public function priceList(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        $args
+    ): ResponseInterface {
+
+        $network = $args['network'];
+
+        $priceList = $this->$network->priceList($network);
+
+        $response->getBody()->write(json_encode($priceList));
+
         return $response;
     }
 }

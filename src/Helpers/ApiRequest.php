@@ -14,10 +14,14 @@ class ApiRequest
         $this->client = new Client();
     }
 
-    public function get(string $url)
+    public function get(string $url, $headers = array())
     {
         try {
-            $response = $this->client->get($url);
+            $options = [];
+            if (!empty($headers)) {
+                $options[RequestOptions::HEADERS] = $headers;
+            }
+            $response = $this->client->get($url, $options);
             return json_decode($response->getBody());
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
@@ -34,12 +38,15 @@ class ApiRequest
         }
     }
 
-    public function post(string $url, $data)
+    public function post(string $url, $data, $headers = array())
     {
         try {
-            $response = $this->client->post($url, [
-                RequestOptions::JSON => $data
-            ]);
+            $options = [RequestOptions::JSON => $data];
+            if (!empty($headers)) {
+                $options[RequestOptions::HEADERS] = $headers;
+            }
+
+            $response = $this->client->post($url, $options);
             return json_decode($response->getBody());
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];

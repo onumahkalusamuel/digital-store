@@ -9,10 +9,10 @@ interface MtnSmeInterface
      *
      * @param int $user_id
      * @param string $phone
-     * @param int $amount
+     * @param int $datasize
      * @return array
      */
-    public function topUp(int $user_id = 0, string $phone, int $amount): array;
+    public function topUp(int $user_id = 0, string $phone, int $datasize): array;
 
     /**
      * Get price list for direct topup. All networks

@@ -39,23 +39,18 @@ final class RegisterAction
         $referral_code = $this->session->get('referral_code') ?? '';
         $fullname = trim($data['fullname']);
         $email = filter_var($data['email'], FILTER_VALIDATE_EMAIL);
-        $password = substr(md5($email), 3, 4) . rand(111, 999);
-        $phone = trim($data['phone']);
+        $password = trim($data['password']);
 
         if (empty($message) && empty($email)) {
-            $message = "Please enter a valid email.";
+            $message = "Please enter a valid email";
+        }
+
+        if (empty($message) && empty($password)) {
+            $message = "Password cannot be empty";
         }
 
         if (empty($message) && $this->user->emailInUse($email)) {
             $message = "Email address already in use";
-        }
-
-        if (empty($message) && empty($phone)) {
-            $message = "Please enter a valid phone number";
-        }
-
-        if (empty($message) && $this->user->phoneInUse($phone)) {
-            $message = "Phone number already in use";
         }
 
         if (empty($message) && (empty($fullname) || strlen($fullname) < 5)) {
@@ -67,7 +62,6 @@ final class RegisterAction
             $userId = $this->user->create(['data' => [
                 'fullname' => $fullname,
                 'email' => $email,
-                'phone' => $phone,
                 'user_type' => 'user',
                 'password' => password_hash($password, PASSWORD_BCRYPT),
                 'status' => 1
@@ -78,7 +72,7 @@ final class RegisterAction
         if (empty($message) && !empty($userId)) {
 
             // send mail
-            $this->mail->sendRegistrationEmail($email, $fullname, $phone, $password);
+            $this->mail->sendRegistrationEmail($email, $fullname, $password);
 
             // add referral code 
             $this->user->update([
@@ -107,9 +101,8 @@ final class RegisterAction
                         $this->mail->sendDirectReferralSignupEmail(
                             $ref->email,
                             $ref->fullname,
-                            $fullname,
-                            $phone,
-                            $email
+                            $email,
+                            $fullname
                         );
                     } catch (\Exception $e) {
                     }
@@ -123,7 +116,7 @@ final class RegisterAction
 
             $response->getBody()->write(json_encode([
                 'success' => true,
-                'message' => "Account registered successfully. Check email for login details.",
+                'message' => "Account registered successfully. You can login immediately.",
                 'redirect' => $url
             ]));
 

@@ -9,5 +9,5 @@ interface WaecResultCardInterface
      *
      * @return array
      */
-    public function buyResultCard(): array;
+    public function buyResultCard(int $user_id = 0): array;
 }

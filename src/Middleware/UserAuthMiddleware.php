@@ -46,11 +46,11 @@ final class UserAuthMiddleware implements MiddlewareInterface
         if ($this->session->get('user_type') === "user") {
             // User is logged in
             // fetch balances and attach to smarty
-            $balances = (array) $this->user->readSingle([
+            $user = (array) $this->user->readSingle([
                 'id' => $this->session->get('id'),
-                'select' => ['balance', 'loyalty_points']
+                'select' => ['fullname', 'email', 'phone', 'balance', 'loyalty_points']
             ]);
-            $this->smarty->assign('balances', $balances);
+            $this->smarty->assign('user', $user);
             return $handler->handle($request);
         }
 

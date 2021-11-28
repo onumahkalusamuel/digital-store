@@ -21,7 +21,23 @@ return function (App $app) {
             return $response->withStatus(404);
         });
 
-        $group->get('/last-transactions[/{type}[/]]', \App\Action\Api\LastTransactionsAction::class)->setName('api-last-transactions');
+        $group->get(
+            '/price-list/sme-data/{network}[/]',
+            [\App\Action\User\SMEData::class, 'priceList']
+        )->setName('price-list-sme-data');
+
+        $group->get(
+            '/price-list/vtu-data/{network}[/]',
+            [\App\Action\User\VTUData::class, 'priceList']
+        )->setName('price-list-vtu-data');
+
+        $group->post(
+            '/quick-buy[/]',
+            [\App\Action\Api\QuickBuy::class, 'init']
+        )->setName('api-quick-buy');
+
+        // payment callback
+        $group->get('/payment-callback[/]', \App\Action\Api\PaymentCallback::class)->setName('payment-callback');
 
         // catch-all
         $group->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '{routes:.+}', function ($request, $response) {

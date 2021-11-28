@@ -10,7 +10,6 @@ use App\Repositories\UsersRepository;
 use App\Traits\GeneralTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Routing\RouteContext;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Smarty as View;
 
@@ -54,7 +53,13 @@ final class ResultCardPreview
         $examination = $args['examination'];
         $trans_ref = $args['trans_ref'];
 
+        // fetch the result card
+
+        $card_details = [];
+
         $this->view->assign('examination', $examination);
+        $this->view->assign('card_details', $card_details);
+        $this->view->assign('trans_ref', $trans_ref);
 
         $this->view->display('user/result-card-preview.tpl');
 

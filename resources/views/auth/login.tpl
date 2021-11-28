@@ -1,47 +1,41 @@
+{assign var="active" value="login"}
 {extends file="layouts/public.tpl"}
 {block name=title}Login{/block}
 {block name=body}
-    <h4 class="">Login</h4>
-    <p>Enter your login details to access your account.</p>
+    <div class="scrollable-container">
+        <div class="scrollable-scroll-area" style="max-height: 100vh;">
+            <div class="" style="text-align: center;padding-top:2rem">
+                <a href="{$route->urlFor('home')}"><img src="/icon.png" style="margin:1.5rem;" width="40px" /> <br /></a>
+                <strong>LOGIN</strong>
+            </div>
+            <form method="POST" action="{$route->urlFor('login')}" onsubmit="return ajaxPost('login', true);" id="login">
+                <div class="card flex align-items-center">
+                    <input class="input card-details" placeholder="phone or email" title="phone or email" name="phone_email"
+                        required>
+                </div>
+                <div class="card flex align-items-center">
+                    <input class="input card-details" placeholder="password" type="password" title="password"
+                        name="password" required>
+                </div>
+                <div class="inner-container" style="cursor: default; text-align:center">
+                    <button class="button" role="submit">Login</button>
+                </div>
+            </form>
 
-    <form id="login" action="{$route->urlFor('login')}" method="POST" class="" onsubmit="return ajaxPost('login');">
-        <div class="">
-            <div class="">
-                <label class="" for="phone-email">
-                    Phone or Email<span>&nbsp;*</span>
-                </label>
+            <div class="inner-container text-center">
+                <div>
+                    Forgot password?
+                    <strong>
+                        <a href="{$route->urlFor('reset-password')}">Reset here</a>
+                    </strong>
+                </div>
+                <div>
+                    No account?
+                    <strong>
+                        <a href="{$route->urlFor('register')}">Signup here</a>
+                    </strong>
+                </div>
             </div>
-            <div class="">
-                <input name="phone_email" type="text" class="" id="phone-email" required>
-            </div>
-        </div>
-        <div class="">
-            <div class="">
-                <label class="" for="password">
-                    Password<span class="text-danger"> &nbsp;*</span>
-                </label>
-            </div>
-            <div class="">
-                <input name="password" type="password" class="" id="password" required>
-            </div>
-        </div>
-        <div class="">
-            <button class="">Login</button>
-        </div>
-    </form>
-    <div class="">
-        <div>
-            Forgot your password?
-            <strong>
-                <a href="{$route->urlFor('reset-password')}">Click here to reset</a>
-            </strong>
-        </div>
-        <div>
-            No account?
-            <strong>
-                <a href="{$route->urlFor('register')}">Signup here</a>
-            </strong>
         </div>
     </div>
-
 {/block}

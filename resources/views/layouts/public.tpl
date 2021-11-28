@@ -28,14 +28,36 @@
 </head>
 
 <body>
-    <nav>
-        <li><a href="/">Home</a></li>
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Register</a></li>
-    </nav>
-    <main>
-        {block name=body}{/block}
-    </main>
+    <div class="global-container container">
+        <main>
+            {block name=body}{/block}
+        </main>
+        <div class="fixed-footer-menu">
+            <div class="flex">
+                <a class="menu-item {if $active eq 'home'}menu-active{/if}" href="{$route->urlFor('home')}">
+                    <img class="" alt="home" src="img/svg/house-door.svg" />
+                    <span class="menu-title">Home</span>
+                </a>
+                <a class="menu-item {if $active eq 'prices'}menu-active{/if}" href="{$route->urlFor('prices')}">
+                    <img class="" alt="menu" src="img/svg/list.svg" />
+                    <span class="menu-title">Prices</span>
+                </a>
+                <a class="menu-item {if $active eq 'faqs'}menu-active{/if}"
+                    href="{$route->urlFor('page',['page'=>'faqs'])}">
+                    <img class="" alt="home" src="img/svg/clock-history.svg" />
+                    <span class="menu-title">FAQs</span>
+                </a>
+                <a class="menu-item {if $active eq 'help'}menu-active{/if}" href="{$route->urlFor('help')}">
+                    <img class="" alt="help" src="img/svg/info-lg.svg" />
+                    <span class="menu-title">Help</span>
+                </a>
+                <a class="menu-item {if $active eq 'login'}menu-active{/if}" href="{$route->urlFor('login')}">
+                    <img class="" alt="login" src="img/svg/person.svg" />
+                    <span class="menu-title">Account</span>
+                </a>
+            </div>
+        </div>
+    </div>
     <script src="js/vendor/modernizr-3.11.2.min.js"></script>
     <script src="js/plugins.js"></script>
     <script src="js/main.js"></script>

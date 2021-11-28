@@ -41,6 +41,7 @@ return function (App $app) {
         $group->get('history[/]', [\App\Action\User\History::class, 'init'])->setName('history');
         $group->get('support[/]', [\App\Action\User\Support::class, 'init'])->setName('support');
         $group->get('profile[/]', [\App\Action\User\Profile::class, 'init'])->setName('profile');
+        $group->post('profile[/]', [\App\Action\User\Profile::class, 'updateProfile']);
     })
         ->add(UserAuthMiddleware::class);
 };

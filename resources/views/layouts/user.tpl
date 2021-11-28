@@ -39,7 +39,7 @@
             <div class="flex">
                 <a class="menu-item {if $active eq 'home'}menu-active{/if}" href="{$route->urlFor('dashboard')}">
                     <img class="" alt="home" src="img/svg/house-door.svg" />
-                    <span class="menu-title">Home</span>
+                    <span class="menu-title">Dashboard</span>
                 </a>
                 <a class="menu-item {if $active eq 'menu'}menu-active{/if}" href="{$route->urlFor('menu')}">
                     <img class="" alt="menu" src="img/svg/list.svg" />

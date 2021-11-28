@@ -138,6 +138,7 @@ final class ResultCard
                 'data' => [
                     'user_id' => $id,
                     'log_type' => 'result-card',
+                    'service_provider' => $examination,
                     'destination' => $user->email,
                     'amount' => $amount,
                     'description' => "Result Card Purchase - {$examination}",

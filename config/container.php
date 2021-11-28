@@ -1,5 +1,7 @@
 <?php
 
+use App\Interfaces\Payment\AccountTopUpPaymentInterface;
+use App\Interfaces\Payment\QuickBuyPaymentInterface;
 use App\Interfaces\ResultCard\NabtebResultCardInterface;
 use App\Interfaces\ResultCard\NecoResultCardInterface;
 use App\Interfaces\ResultCard\WaecResultCardInterface;
@@ -175,4 +177,12 @@ return [
         $provider = $container->get('serviceProviders')['NabtebResultCard'];
         return new $provider;
     },
+    QuickBuyPaymentInterface::class => function (ContainerInterface $container) {
+        $provider = $container->get('serviceProviders')['QuickBuyPayment'];
+        return new $provider;
+    },
+    AccountTopUpPaymentInterface::class => function (ContainerInterface $container) {
+        $provider = $container->get('serviceProviders')['AccountTopUpPayment'];
+        return new $provider;
+    }
 ];

@@ -36,11 +36,20 @@ return function (App $app) {
             return $response;
         })->setName('reset-password');
 
+        $group->get('help[/]', [\App\Action\Help::class, 'init'])->setName('help');
+
         $group->get('reset[/]', \App\Action\ResetUpdateView::class)->setName('password-reset-link');
 
         $group->get('logout[/]', \App\Action\LogoutAction::class)->setName('logout');
 
         $group->get('ref/{referral_code}[/]', \App\Action\AffiliatesAction::class)->setName('ref');
+
+        $group->get(
+            'payment-redirect/{transaction_id}[/]',
+            \App\Action\PaymentRedirect::class
+        )->setName('payment-redirect');
+
+        $group->get('prices[/]', \App\Action\Prices::class)->setName('prices');
 
         //catch-all page
         $group->get('page/{page}', \App\Action\PageView::class)->setName('page');

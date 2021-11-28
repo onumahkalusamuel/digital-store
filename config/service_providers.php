@@ -22,4 +22,7 @@ return [
     'WaecResultCard' => 'App\Services\MobileAirtimeNg\ResultCard\WaecResultCard',
     'NecoResultCard' => 'App\Services\MobileAirtimeNg\ResultCard\NecoResultCard',
     'NabtebResultCard' => 'App\Services\MobileAirtimeNg\ResultCard\NabtebResultCard',
+    //Payment
+    'QuickBuyPayment' => 'App\Services\Flutterwave\QuickBuyPayment',
+    'AccountTopUpPayment' => 'App\Services\Flutterwave\AccountTopUpPayment',
 ];

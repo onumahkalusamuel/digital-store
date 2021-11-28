@@ -125,6 +125,7 @@ final class VTUData
             $this->trailLog->create([
                 'data' => [
                     'user_id' => $id,
+                    'service_provider' => $network,
                     'log_type' => 'vtu-data',
                     'destination' => $data['phone'],
                     'amount' => $data['bundle'],
@@ -164,6 +165,21 @@ final class VTUData
         $response->getBody()->write(json_encode($responseBody));
 
         // return response
+        return $response;
+    }
+
+    public function priceList(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        $args
+    ): ResponseInterface {
+
+        $network = $args['network'];
+
+        $priceList = $this->$network->priceList($network);
+
+        $response->getBody()->write(json_encode($priceList));
+
         return $response;
     }
 }

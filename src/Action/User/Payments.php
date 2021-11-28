@@ -2,6 +2,8 @@
 
 namespace App\Action\User;
 
+use App\Helpers\SendMail;
+use App\Interfaces\Payment\AccountTopUpPaymentInterface;
 use App\Repositories\PaymentsRepository;
 use App\Repositories\SettingsRepository;
 use App\Repositories\TrailLogRepository;
@@ -24,6 +26,8 @@ final class Payments
     protected $view;
     protected $payments;
     protected $settings;
+    protected $sendMail;
+    protected $account;
 
     public function __construct(
         UsersRepository $user,
@@ -31,7 +35,9 @@ final class Payments
         View $view,
         TrailLogRepository $trailLog,
         PaymentsRepository $payments,
-        SettingsRepository $settings
+        SettingsRepository $settings,
+        SendMail $sendMail,
+        AccountTopUpPaymentInterface $account
     ) {
         $this->user = $user;
         $this->session = $session;
@@ -39,6 +45,8 @@ final class Payments
         $this->trailLog = $trailLog;
         $this->payments = $payments;
         $this->settings = $settings;
+        $this->sendMail = $sendMail;
+        $this->account = $account;
     }
 
     public function init(
@@ -46,13 +54,36 @@ final class Payments
         ResponseInterface $response
     ): ResponseInterface {
 
-        $payments = $this->payments->readPaging([]);
+        // process pagination
+
+        $payments = $this->payments->readPaging([
+            'params' => [
+                'where' => ['type' => 'accounttopup']
+            ],
+            'filters' => [
+                'order_by' => 'status',
+                'order' => 'DESC'
+            ]
+        ]);
+
+        $payments['data'] = $this->toArray($payments['data']);
 
         $account_details = [
             'account_name' => $this->settings->payments__account_name,
             'account_number' => $this->settings->payments__account_number,
             'bank_name' => $this->settings->payments__bank_name
         ];
+
+        $this->toArray($payments['data']);
+
+        foreach ($payments['data'] as $key => $p) {
+            $date = strtotime($payments['data'][$key]['created_at']);
+            $payments['data'][$key]['created_at'] = date("d-M-Y", $date);
+            $payments['data'][$key]['payment_link'] = '';
+            if ($p['status'] == "pending") {
+                $payments['data'][$key]['payment_link'] = json_decode($p['details'])->payment_link;
+            }
+        }
 
         $this->view->assign('payments', $payments);
         $this->view->assign('account_details', $account_details);
@@ -70,7 +101,12 @@ final class Payments
         $data = (array) $request->getParsedBody();
         $responseBody = [];
         $message = "";
+
         $id = $this->session->get('id');
+
+        if (empty($message) && empty($data['amount'])) {
+            $message = "Please enter a valid amount.";
+        }
 
         $user = $this->user->readSingle(['id' => $id]);
 
@@ -78,40 +114,61 @@ final class Payments
             $message = "User not found.";
         }
 
-        $payment_link = "";
-        // process request 
-        // 
-
-        // log it in transactions
         if (empty($message)) {
-            $this->trailLog->create([
+            $reference = strtoupper(uniqid("{$id}-"));
+            $routeParser = RouteContext::fromRequest($request)->getRouteParser();
+            $redirect_url = $routeParser->urlFor("payment-redirect", [
+                'transaction_id' => $reference
+            ]);
+            $accountTopUp = $this->account->generatePaymentLink(
+                $reference,
+                $data['amount'],
+                [
+                    'name' => $user->fullname,
+                    'phone' => $user->phone,
+                    'email' => $user->email,
+                    'redirect_url' => $redirect_url
+                ]
+            );
+        }
+
+        //check if link came through
+        if (empty($message) && empty($accountTopUp['success'])) {
+            $message = $accountTopUp['message'] ?? "Unable to process your request at the moment.";
+        }
+
+        if (empty($message) && !empty($accountTopUp['payment_link'])) {
+            $responseBody['payment_link'] = $accountTopUp['payment_link'];
+        }
+
+        // save to payments record
+        if (empty($message)) {
+            $paymentId = $this->payments->create([
                 'data' => [
-                    'user_id' => $id,
-                    'log_type' => 'wallet-funding',
-                    'description' => "Wallet Funding"
+                    'type' => 'quickbuy',
+                    'service_id' => $accountTopUp['platform_id'],
+                    'transaction_id' => $reference,
+                    'amount' => $data['amount'],
+                    'details' => json_encode($accountTopUp)
                 ]
             ]);
 
-            // notify the user of this transaction
-            $this->sendMail->sendTransactionLog([
-                'transaction' => "Wallet Funding"
-            ], $user->email);
+            if (empty($paymentId)) {
+                $message = "Invalid generated payment link. Please try again later.";
+            }
         }
 
-        // prepare response body
+        // return the payment link to user for display and wait for payment
         if (empty($message)) {
             $responseBody['success'] = true;
-            $responseBody['message'] = "";
-            $responseBody['redirect'] = $payment_link;
+            $responseBody['message'] = "You'll be redirected to payment page shortly.";
         } else {
             $responseBody['success'] = false;
-            $responseBody['message'] = !empty($message) ? $message : 'Unable to process request at the moment!';
+            $responseBody['message'] = $message;
         }
 
-        // write body
         $response->getBody()->write(json_encode($responseBody));
 
-        // return response
         return $response;
     }
 }

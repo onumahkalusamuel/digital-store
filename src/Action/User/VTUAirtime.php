@@ -133,6 +133,7 @@ final class VTUAirtime
                 'data' => [
                     'user_id' => $id,
                     'log_type' => 'vtu-airtime',
+                    'service_provider' => $network,
                     'destination' => $data['phone'],
                     'amount' => $data['amount'],
                     'description' => "VTU Airtime - {$network}",

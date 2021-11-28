@@ -11,8 +11,9 @@ class PaymentsRepository extends Repository
     protected $properties = [
         'id',
         'type',
-        'data',
-        'status',
-        'error'
+        'service_id',
+        'transaction_id',
+        'amount',
+        'details'
     ];
 }

@@ -1,4 +1,4 @@
-function ajaxPost(elementId = 'form') {
+function ajaxPost(elementId = 'form', silent = false) {
     var form = document.getElementById(elementId);
     var formData = JSON.stringify(Object.fromEntries(new FormData(form)));
 
@@ -13,7 +13,7 @@ function ajaxPost(elementId = 'form') {
         if (xhr.readyState !== 4) return;
         try {
             var response = JSON.parse(xhr.response);
-            alert(response.message);
+            if(!silent || (silent && response.success == false)) alert(response.message);
             if (response.success == true && !!response.redirect) {
                 window.location.assign(response.redirect);
             }
@@ -30,44 +30,26 @@ function ajaxPost(elementId = 'form') {
     return false;
 }
 
-function checkNumberPrefix(network) {
-    var valid = false;
-    var destination = event.target.value;
-    if (destination.length < 4) return;
-    var check = getNumberPrefix(destination);
-    prefixes.forEach(function(ele) {
-        if (check === ele) {
-            valid = true;
-        }
+function toggleListMenu(targetElementId) {
+    var clickTarget = document.querySelector("#" + targetElementId);
+    if (clickTarget.style.display == "block") clickTarget.style.display = "none";
+    else {
+        clickTarget.style.display = "block";
+    }
+}
+
+function chooseBeneficiaries(network, handle) {
+    alert('choose beneficiary coming soon');
+}
+
+function showModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = 'block';
+}
+
+function hideModal() {
+    var modals = document.querySelectorAll('.modal');
+    modals.forEach(function(ele) {
+        ele.style.display = 'none';
     });
-
-    if (!valid) {
-        document.querySelector('#phone').setCustomValidity("Please enter a valid "+network+" number.");
-    } else {
-        document.querySelector('#phone').setCustomValidity("");
-    }
-}
-
-function getNumberPrefix(destination) {
-    return "0" + destination.replace(/\+/, "").replace(/^234/, "").replace(/^0/, "").substr(0, 3)
-}
-
-function checkEnteredAmount() {
-    var bundleValue = event.target.value;
-    if (bundleValue > balance) {
-        document.querySelector('#amount')
-            .setCustomValidity("Amount above balance (#" + balance + ")");
-    } else {
-        document.querySelector('#amount').setCustomValidity("");
-    }
-}
-
-function checkSelectedBundle() {
-    var bundleValue = event.target.value;
-    if (bundleValue > balance) {
-        document.querySelector('#bundle')
-            .setCustomValidity("Price of bundle above balance (#" + balance + ")");
-    } else {
-        document.querySelector('#bundle').setCustomValidity("");
-    }
 }

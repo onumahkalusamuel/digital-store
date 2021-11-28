@@ -152,7 +152,7 @@ class SendMail
         );
     }
 
-    public function sendRegistrationEmail($email, $name, $phone, $password)
+    public function sendRegistrationEmail($email, $name, $password)
     {
         return $this->sendTemplatedMail(
             [
@@ -161,9 +161,23 @@ class SendMail
                 'name' => $name,
                 'subject' => "Registration"
             ],
-            ['#name#' => $name, '#email#' => $email, '#phone#' => $phone, '#password#' => $password]
+            ['#name#' => $name, '#email#' => $email, '#password#' => $password]
         );
     }
+
+    public function sendDirectReferralSignupEmail($refemail, $refname, $email, $name)
+    {
+        return $this->sendTemplatedMail(
+            [
+                'template' => 'referral-signup',
+                'email' => $refemail,
+                'name' => $refname,
+                'subject' => "Referral Signup"
+            ],
+            ['#refname#' => $refname, '#refemail#' => $refemail, '#name#' => $name, '#email#' => $email]
+        );
+    }
+
 
     public function sendResultCardPurchase($cardDetails, $examination, $email)
     {
