@@ -2,8 +2,12 @@
 
 namespace App\Interfaces\Payment;
 
+use App\Objects\PaymentLinkDetailsObject;
+use App\Responses\Payment\GeneratePaymentLinkResponse;
+use App\Responses\Payment\PaymentVerificationResponse;
+
 interface AccountTopUpPaymentInterface
 {
-    public function generatePaymentLink($reference, $amount, $details): array;
-    public function paymentVerification($reference): array;
+    public function generatePaymentLink(string $reference, float $amount, PaymentLinkDetailsObject $details): GeneratePaymentLinkResponse;
+    public function paymentVerification($reference): PaymentVerificationResponse;
 }

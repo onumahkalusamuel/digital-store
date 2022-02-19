@@ -2,6 +2,8 @@
 
 namespace App\Interfaces\VTU;
 
+use App\Responses\VTU\VTUResponse;
+
 interface NineMobileSmeInterface
 {
     /**
@@ -10,9 +12,9 @@ interface NineMobileSmeInterface
      * @param int $user_id
      * @param string $phone
      * @param int $amount
-     * @return array
+     * @return \App\Responses\VTU\VTUResponse
      */
-    public function topUp(int $user_id = 0, string $phone, int $amount): array;
+    public function topUp(int $user_id = 0, string $phone, int $amount): VTUResponse;
 
     /**
      * Get price list for direct topup. All networks

@@ -4,6 +4,7 @@ namespace App\Action\User;
 
 use App\Helpers\SendMail;
 use App\Interfaces\Payment\AccountTopUpPaymentInterface;
+use App\Objects\PaymentLinkDetailsObject;
 use App\Repositories\PaymentsRepository;
 use App\Repositories\SettingsRepository;
 use App\Repositories\TrailLogRepository;
@@ -123,12 +124,7 @@ final class Payments
             $accountTopUp = $this->account->generatePaymentLink(
                 $reference,
                 $data['amount'],
-                [
-                    'name' => $user->fullname,
-                    'phone' => $user->phone,
-                    'email' => $user->email,
-                    'redirect_url' => $redirect_url
-                ]
+                new PaymentLinkDetailsObject($user->fullname, $user->phone, $user->email, $redirect_url)
             );
         }
 

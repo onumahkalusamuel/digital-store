@@ -16,10 +16,13 @@ use App\Interfaces\VTU\MtnDataInterface;
 use App\Interfaces\VTU\MtnSmeInterface;
 use App\Interfaces\VTU\NineMobileAirtimeInterface;
 use App\Interfaces\VTU\NineMobileDataInterface;
+use App\Objects\PaymentLinkDetailsObject;
 use App\Repositories\PaymentsRepository;
 use App\Repositories\ProductsRepository;
 use App\Repositories\QuickBuyRepository;
 use App\Repositories\TrailLogRepository;
+use App\Responses\ResultCard\ResultCardResponse;
+use App\Responses\VTU\VTUResponse;
 use App\Traits\GeneralTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -180,12 +183,7 @@ final class QuickBuy
             $quickBuyPayment = $this->quickBuyPayment->generatePaymentLink(
                 $transactionId,
                 $amount,
-                [
-                    'name' => 'Guest',
-                    'phone' => $phone,
-                    'email' => $email,
-                    'redirect_url' => $redirect_url
-                ]
+                new PaymentLinkDetailsObject('Guest', $phone, $email, $redirect_url)
             );
         }
 
@@ -250,7 +248,8 @@ final class QuickBuy
     public function processTransaction($transactionId): array
     {
         $message = '';
-        $topUp = [];
+        $vtuResponse = new VTUResponse();
+        $resultCardResponse = new ResultCardResponse();
         $response = [
             'success' => false,
             'message' => ''
@@ -276,6 +275,7 @@ final class QuickBuy
         // process sme-data
         if (empty($message)) {
             if ($details['product'] == "sme-data") {
+                $topUp = $vtuResponse;
                 // get the actual amount for the selected plan
                 if ($details['network'] == "mtn") {
                     $topUp = $this->mtnSme->topUp(0, $details['phone'], $details['units']);
@@ -285,6 +285,7 @@ final class QuickBuy
 
         if (empty($message)) {
             if ($details['product'] == "vtu-data") {
+                $topUp = $vtuResponse;
                 if ($details['network'] == "mtn") {
                     $topUp = $this->mtnData->topUp(0, $details['phone'], $details['amount']);
                 }
@@ -302,6 +303,7 @@ final class QuickBuy
 
         if (empty($message)) {
             if ($details['product'] == "vtu-airtime") {
+                $topUp = $vtuResponse;
                 if ($details['network'] == "mtn") {
                     $topUp = $this->mtnAirtime->topUp(0, $details['phone'], $details['amount']);
                 }
@@ -318,17 +320,18 @@ final class QuickBuy
         }
 
         // conclude the above transtions. to start result card
-        if (empty($topUp['success'])) {
-            $message = $topUp['message'] ?? "Top up processing. Please try again.";
+        if (empty($topUp->success)) {
+            $message = $topUp->message ?? "Top up processing. Please try again.";
         }
         if (empty($message)) {
-            $details['trans_ref'] = $topUp['trans_ref'];
-            $details['platform_id'] = $topUp['platform_id'];
+            $details['trans_ref'] = $topUp->trans_ref;
+            $details['platform_id'] = $topUp->platform_id;
         }
 
         // continue to the scratch cards
         if (empty($message)) {
             if ($details['product'] == "result-card") {
+                $resultCard = $resultCardResponse;
                 $purchasedCards = [];
                 for ($i = 0; $i < $details['quantity']; $i++) {
 
@@ -342,8 +345,8 @@ final class QuickBuy
                         $resultCard = $this->nabteb->buyResultCard();
                     }
 
-                    if (empty($resultCard['success'])) {
-                        $message = $resultCard['message'];
+                    if (empty($resultCard->success)) {
+                        $message = $resultCard->message;
                         break;
                     }
                     $purchasedCards[] = $resultCard;

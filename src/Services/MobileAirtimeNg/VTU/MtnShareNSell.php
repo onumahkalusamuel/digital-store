@@ -3,6 +3,8 @@
 namespace App\Services\MobileAirtimeNg\VTU;
 
 use App\Interfaces\VTU\MtnShareNSellInterface;
+use App\Objects\VTUResponseBodyObject;
+use App\Responses\VTU\VTUResponse;
 use App\Services\MobileAirtimeNg\VTUTraits;
 
 class MtnShareNSell implements MtnShareNSellInterface
@@ -10,7 +12,7 @@ class MtnShareNSell implements MtnShareNSellInterface
 
     use VTUTraits;
 
-    public function topUp(int $user_id = 0, string $phone, int $amount): array
+    public function topUp(int $user_id = 0, string $phone, int $amount): VTUResponse
     {
         //verify network code
         $network = $this->getNetworkCode($phone);
@@ -24,12 +26,24 @@ class MtnShareNSell implements MtnShareNSellInterface
         //assign trans_ref
         $trans_ref = uniqid($user_id . "_");
 
-        $process = $this->MtnShareNSell($phone, $amount, $trans_ref);
+        $subscribe = $this->MtnShareNSell($phone, $amount, $trans_ref);
 
-        if (!empty($process['success'])) {
-            $process['trans_ref'] = $trans_ref;
+        if (!empty($subscribe['success'])) {
+            $subscribe['trans_ref'] = $trans_ref;
         }
 
-        return $process;
+        return new VTUResponse(
+            $subscribe['success'],
+            $subscribe['message'],
+            $subscribe['code'],
+            $subscribe['platform_id'],
+            $subscribe['trans_ref'],
+            new VTUResponseBodyObject(
+                $subscribe['body']->code,
+                $subscribe['body']->message,
+                $subscribe['body']->user_ref,
+                $subscribe['body']->batch_no
+            )
+        );
     }
 }

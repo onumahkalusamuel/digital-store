@@ -2,12 +2,14 @@
 
 namespace App\Interfaces\ResultCard;
 
+use App\Responses\ResultCard\ResultCardResponse;
+
 interface NecoResultCardInterface
 {
     /**
      * Neco Result Card Interface
      *
-     * @return array
+     * @return \App\Responses\ResultCard\ResultCardResponse
      */
-    public function buyResultCard(int $user_id = 0): array;
+    public function buyResultCard(int $user_id = 0): ResultCardResponse;
 }

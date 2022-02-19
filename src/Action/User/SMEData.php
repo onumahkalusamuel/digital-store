@@ -118,13 +118,13 @@ final class SMEData
         // if successful, deduct money from account, and give loyalty bonus
         if (empty($message)) {
             $balance_before = $user->balance;
-            $balance_after = $user->balance - $currentBundle['amount'];
-            $loyalty_points = round($currentBundle['amount'] * $_ENV['LOYALTY_POINTS_RATE']);
+            $loyalty_points = round($currentBundle['amount'] * $_ENV['LOYALTY_POINTS_RATE'], 2);
+            $balance_after = $user->balance - $currentBundle['amount'] + $loyalty_points;
             $this->user->update([
                 'id' => $id,
                 'data' => [
                     'balance' => $balance_after,
-                    'loyalty_points' => $loyalty_points
+                    'loyalty_points' => $user->loyalty_points + $loyalty_points
                 ]
             ]);
         }

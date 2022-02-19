@@ -30,9 +30,6 @@
 <body>
     <div class="global-container container">
         <main>
-            {* <p>{block name=title}{/block}</p>
-            Balance: {$balances.balance} <br />
-            Loyalty Points: {$balances.loyalty_points} *}
             {block name=body}{/block}
         </main>
         <div class="fixed-footer-menu">
